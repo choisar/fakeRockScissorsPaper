@@ -1,4 +1,5 @@
 import numpy as np
+from dataclasses import dataclass
 
 RNG = np.random.default_rng()
 
@@ -8,6 +9,15 @@ BEATS = {
     "바위": "가위",
     "보": "바위"
 }
+
+
+@dataclass(frozen=True)
+class GameConfig:
+    total_players: int = 6
+    colluders: int = 2
+    fixed_hand: str = "바위"
+    target_catchers: int = 2
+
 
 def play_hands(players, fixed_hand=None):
     """
@@ -60,41 +70,51 @@ def filter_players_to_exact_count(pool_players, target_count, fixed_hand=None):
     pool_players 중에서 가위바위보를 반복해
     정확히 target_count명의 패배자(이름)를 선출합니다.
     """
-    current_pool = [dict(p) for p in pool_players]
+    if not 0 <= target_count <= len(pool_players):
+        raise ValueError("target_count는 플레이어 수 이내여야 합니다.")
+
+    current_pool = [dict(player) for player in pool_players]
+    selected = []
 
     round_no = 1
-    while True:
-        # 매 판마다 손을 새로 냄
+    while len(selected) < target_count:
         play_hands(current_pool, fixed_hand)
         print_hand_status(current_pool, f"서브 라운드 {round_no}")
-        _, _, losers = first_round(current_pool)
+        winning_hand, _, losers = first_round(current_pool)
         round_no += 1
 
         if not losers:
             continue
 
-        # 패배자 수가 목표와 일치할 때
-        if len(losers) == target_count:
-            return losers
+        remaining = target_count - len(selected)
+        if len(losers) <= remaining:
+            selected.extend(losers)
+            if len(selected) == target_count:
+                return selected
 
-        # 패배자가 목표보다 많을 때: 패배자들끼리 좁혀서 재경기
-        elif len(losers) > target_count:
-            current_pool = [p for p in current_pool if p["player"] in losers]
-
-        # 패배자가 목표보다 적을 때: 나온 패배자는 확정, 부족분은 생존자들 중에서 추가 선출
+            current_pool = [
+                player for player in current_pool
+                if player["player"] not in losers
+            ]
         else:
-            confirmed_losers = losers
-            needed = target_count - len(confirmed_losers)
-            survivors = [p for p in current_pool if p["player"] not in losers]
-            
-            additional_losers = filter_players_to_exact_count(survivors, needed, fixed_hand)
-            return confirmed_losers + additional_losers
+            current_pool = [
+                player for player in current_pool
+                if player["player"] in losers
+            ]
 
-def rock_paper_scissors():
-    total_players = 6
-    colluders = 2
-    fixed_hand = "바위"
-    target_catchers = 2
+        if not current_pool:
+            raise RuntimeError(
+                f"유효한 선발 풀이 없습니다. 마지막 승리 손: {winning_hand}"
+            )
+
+    return selected
+
+
+def rock_paper_scissors(config=GameConfig()):
+    total_players = config.total_players
+    colluders = config.colluders
+    fixed_hand = config.fixed_hand
+    target_catchers = config.target_catchers
 
     # 1. 초기 플레이어 생성 (hand 할당 제거 및 colluders 수 기반 동적 생성)
     results = [
