@@ -4,6 +4,19 @@ import json
 
 def build_report(data, output):
     template = THROW_TEMPLATE if data.get('mode') == 'throw-analysis' else TEMPLATE
+    if data.get('mode') == 'throw-analysis':
+        from exact import block_summary, block_expected_catchers
+        from fractions import Fraction
+        theory = {}
+        for c in data['conditions']:
+            if c['strategy'] == 'independent':
+                value = Fraction(c['players']-c['catchers'], c['players'])
+                theory[c['id']] = dict(kind='independent', baseline=str(value))
+            else:
+                theory[c['id']] = dict(kind='block',
+                    expected_catchers=str(block_expected_catchers(c['colluders'], c['players']-c['colluders'], c['catchers'])),
+                    **block_summary(c['colluders'], c['players']-c['colluders'], c['catchers']))
+        data = dict(data, block_theory=theory)
     output.write_text(template.replace('__DATA__',json.dumps(data,ensure_ascii=False).replace('<','\\u003c')),encoding='utf-8')
 
 
@@ -56,6 +69,7 @@ THROW_TEMPLATE = r'''<!doctype html><html lang="ko"><meta charset="utf-8"><meta 
 <section class="card"><h2>첫 유효 투구: 어느 경로가 전체 차이를 구성했나?</h2><p id="branch-denominator"></p><p>즉시 확정 인원은 해당 분기 게임당 평균입니다. 기여도 = 발생 비율 × 해당 경로의 최종 평균 차이. 이 분해는 관측 경로의 구성이며, 분기 자체의 인과 효과를 뜻하지 않습니다.</p><div class="scroll"><table><thead><tr><th>분기</th><th>게임 수 / 비율</th><th>즉시 술래: 비교 / 나머지</th><th>즉시 생존: 비교 / 나머지</th><th>최종 차이</th><th>전체 차이에 대한 기여</th><th>실제 게임</th></tr></thead><tbody id="branches"></tbody></table></div><p id="contribution-sum" class="status"></p><h3>이 경로는 왜 유리하거나 불리할까?</h3><p id="mechanism"></p><p id="mechanism-numbers"></p><p class="muted">아래 실제 게임은 경로를 읽기 위한 예시입니다. 분기 평균은 예시 두 게임이 아닌 전체 해당 게임에서 계산합니다.</p></section>
 <section class="card"><h2>실제 투구 따라가기</h2><p>위 분기를 선택하거나 실제 기록에서 보존한 게임을 고르세요. 모든 표시는 해당 게임의 기록입니다.</p><div class="controls"><select id="game"></select><button id="previous">이전 투구</button><button id="next">다음 투구</button></div><p id="game-meta"></p><div id="hands"></div><p id="event-outcome" class="status"></p><p id="transition"></p><p id="final"></p></section>
 <section class="card"><h2>전체 투구에서 관측한 선택과 상태 전이</h2><p id="throws"></p><p id="agreement"></p><div class="scroll"><table><thead><tr><th>집단</th><th>바위</th><th>가위</th><th>보</th><th>실제 손 기록 수</th></tr></thead><tbody id="hands-summary"></tbody></table></div><details><summary>후속 투구를 포함한 상태별 집계</summary><p>횟수의 분모는 게임이 아닌 해당 상태의 이벤트 방문 수입니다. 무승부 재방문과 담합 해제 상태를 구분합니다.</p><div class="scroll"><table><thead><tr><th>남은 비교/나머지/정원</th><th>분기</th><th>담합 해제</th><th>방문 수</th><th>확정 술래: 비교/나머지</th><th>확정 생존: 비교/나머지</th></tr></thead><tbody id="states"></tbody></table></div></details></section>
+<section class="card"><details id="block-proof"><summary>일반적 증명으로 검산하기 — 관측한 전체 순위가 아닙니다</summary><p id="block-theory"></p><p>공동 집단 하나와 나머지 개인들을 단위로 순서화하면 단위 순서는 균등합니다. 패자 부분을 앞에 놓고 인원 정원만큼 선택하는 과정은 실제 과다·일치·미달 규칙과 같은 최종 술래 집합 분포를 갖습니다.</p><p>c명 묶음 앞의 개인 수 J는 0~m에서 균등하고, 개인의 묶음 내부 위치 U는 1~c에서 독립·균등합니다. 수학적으로 확장한 순위는 R=J+U입니다. 같은 시드의 실제 투구 순서나 관측 순위라는 주장이 아닙니다.</p><p><code>E = [T(k) − T(k−c) − T(k−m−1)] / (m+1)</code>, T(x)=max(x,0)·(max(x,0)+1)/2. c≥2인 공동 선택은 k&lt;n/2에서 양의 생존율 차이, k=n/2에서 0, k&gt;n/2에서 음의 차이를 갖습니다. c=1이면 항상 0입니다.</p><p>전체 가정·증명은 저장소의 project.md ‘묶음 순서 모델의 일반적 증명’, 재현 명령은 README에서 확인할 수 있습니다. 유한 열거는 증명의 대체물이 아닌 구현 검산입니다.</p></details></section>
 <section class="card"><h2>원자료와 검증 범위</h2><p><a id="raw">전체 압축 투구 원자료</a> — 원자료는 로컬 재현 명령으로 생성합니다. Git에는 요약과 리포트를 보관합니다.</p><p>공동 무작위와 독립 무작위는 개인별 손 선택 확률을 각각 1/3로 유지하면서 선택의 결합을 바꿉니다. 공동 선택 집단만 남으면 독립 선택으로 전환합니다. 게임은 최종 술래만 관측하므로 전체 순위 분포를 관측값으로 표시하지 않습니다.</p><p>정확 계산값은 검산용입니다. 분산 0이면 추론 불가로 표시합니다. 여러 조건의 p값에는 한 실행 전체의 Holm 보정을 적용하며 신뢰구간은 점별 구간입니다. 실제 인간의 전략·학습·영상 규칙까지 일반화하지 않습니다.</p><details><summary>실행 정보</summary><pre id="metadata"></pre></details></section></main>
 <script>const data=__DATA__;
 const $=id=>document.getElementById(id),pct=x=>(100*x).toFixed(2)+'%',pp=x=>(100*x).toFixed(2)+'%p';
@@ -94,7 +108,8 @@ $('mechanism').textContent=mechanism;
 $('mechanism-numbers').textContent=c.observed_branches.map(b=>`${labels[b.branch]}: ${pct(b.frequency)}의 게임 × 경로 평균 ${pp(b.mean_delta)} = ${pp(b.contribution)}`).join(' / ')+` → 합계 ${pp(s.delta)}. 관측 경로의 구성으로 해석하며 분기 자체의 인과 효과로 해석하지 않습니다.`;
 samples=c.observed_branches.flatMap(b=>b.samples.map(sample=>({...sample,branch:b.branch})));$('game').innerHTML=samples.map((sample,i)=>`<option value="${i}">게임 ${sample.game} · ${labels[sample.branch]}</option>`).join('');sampleIndex=0;step=0;renderGame();drawEffects();renderCoverage();
 $('throws').textContent=`실제 투구 ${c.throws.toLocaleString()}회 / 무승부 ${c.draws.toLocaleString()}회 / 담합 해제 후 투구 ${c.released_throws.toLocaleString()}회`;$('agreement').textContent=`담합 해제 이벤트를 제외한 비교집단 쌍의 동일 손 비율: ${c.eligible_pairs?pct(c.same_hand_pairs/c.eligible_pairs):'해당 없음'} (동일 손 ${c.same_hand_pairs.toLocaleString()} / 쌍 관측 ${c.eligible_pairs.toLocaleString()}). 같은 게임에서 반복 관측한 기술통계입니다.`;
-$('hands-summary').innerHTML=c.hand_counts.map((counts,i)=>{const total=counts.reduce((a,b)=>a+b,0);return `<tr><td>${i?'나머지 집단':'비교집단'}</td>${counts.map(v=>`<td>${total?pct(v/total):'해당 없음'}</td>`).join('')}<td>${total.toLocaleString()}</td></tr>`}).join('');$('states').innerHTML=c.observed_states.map(s=>`<tr><td>${s.pool_c} / ${s.pool_n} / ${s.remaining}</td><td>${labels[s.branch]}</td><td>${s.released?'예':'아니오'}</td><td>${s.visits.toLocaleString()}</td><td>${s.caught_c} / ${s.caught_n}</td><td>${s.safe_c} / ${s.safe_n}</td></tr>`).join('');$('raw').href=c.raw_file;$('metadata').textContent=JSON.stringify({simulation:data.metadata,presentation:data.presentation||null},null,2);}
+$('hands-summary').innerHTML=c.hand_counts.map((counts,i)=>{const total=counts.reduce((a,b)=>a+b,0);return `<tr><td>${i?'나머지 집단':'비교집단'}</td>${counts.map(v=>`<td>${total?pct(v/total):'해당 없음'}</td>`).join('')}<td>${total.toLocaleString()}</td></tr>`}).join('');$('states').innerHTML=c.observed_states.map(s=>`<tr><td>${s.pool_c} / ${s.pool_n} / ${s.remaining}</td><td>${labels[s.branch]}</td><td>${s.released?'예':'아니오'}</td><td>${s.visits.toLocaleString()}</td><td>${s.caught_c} / ${s.caught_n}</td><td>${s.safe_c} / ${s.safe_n}</td></tr>`).join('');const theorem=data.block_theory[c.id];$('block-theory').textContent=theorem.kind==='independent'?`독립 선택 대조에는 묶음 공식을 적용하지 않습니다. 각 개인의 이론 생존율은 ${theorem.baseline}이며 집단 차이는 0입니다.`:`묶음 공식의 이론 기대 비교집단 술래 수 ${theorem.expected_catchers}명, 개인 생존율 ${theorem.p_c.fraction} 대 ${theorem.p_n.fraction}, 차이 ${theorem.delta.fraction}. 위 관측 통계와 구분한 수학적 도출값입니다.`;
+$('raw').href=c.raw_file;$('metadata').textContent=JSON.stringify({simulation:data.metadata,presentation:data.presentation||null},null,2);}
 function ids(people){return people.map(p=>p+1).join(', ')||'없음'}
 function renderGame(){const sample=samples[sampleIndex],e=sample.events[step];$('game').value=sampleIndex;$('game-meta').textContent=`게임 ${sample.game} · 이벤트 ${step+1}/${sample.events.length} · ${e.kind==='throw'?'실제 투구':'투구 없는 자동 확정'} · 남은 정원 ${e.remaining}명`;$('hands').innerHTML=e.pool.map((p,i)=>`<span class="participant ${p<current.colluders?'focal':''}">${p+1}번 · ${e.kind==='throw'?['바위','가위','보'][e.hands[i]]:'자동 확정'}</span>`).join('');$('event-outcome').textContent=`${labels[e.branch]}${e.released?' · 담합 해제':''} · 새 술래: ${ids(e.new_catchers)} · 새 생존: ${ids(e.new_survivors)}`;$('transition').textContent=e.terminal?'선정 종료':`다음 참가자: ${ids(e.next_pool)}`;$('final').textContent=`이 게임의 최종 술래: ${ids(sample.catchers)}`;$('previous').disabled=step===0;$('next').disabled=step===sample.events.length-1;}
 for(const id of ['population','strategy'])$(id).addEventListener('change',render);$('quota').addEventListener('input',render);$('game').addEventListener('change',()=>{sampleIndex=Number($('game').value);step=0;renderGame()});$('previous').onclick=()=>{step--;renderGame()};$('next').onclick=()=>{step++;renderGame()};$('branches').onclick=e=>{const b=e.target.closest('button');if(b){const branch=current.observed_branches[Number(b.dataset.branch)].branch;sampleIndex=samples.findIndex(s=>s.branch===branch);step=0;renderGame()}};render();</script></html>'''
@@ -115,6 +130,7 @@ if __name__ == '__main__':
     data = json.loads(original)
     data['presentation'] = dict(input_file=args.results.name, input_sha256=hashlib.sha256(original).hexdigest(),
                                 renderer_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                                derivation_sha256=hashlib.sha256(Path(__file__).with_name('exact.py').read_bytes()).hexdigest(),
                                 note='Presentation only; original simulation metadata and results remain unchanged')
     build_report(data, args.output)
     print(args.output.resolve())

@@ -1,0 +1,30 @@
+{
+  "kind": "finite checks of the general block-order theorem",
+  "max_players": 20,
+  "mixed_populations": 190,
+  "quota_conditions": 2470,
+  "checks": [
+    "uniform-block closed form vs recursive RPS enumeration",
+    "rank PMF/CDF and moments",
+    "quota complement and sign, including single-player controls"
+  ],
+  "observed_inputs": [
+    {
+      "path": "outputs/population-analysis/main/results.json",
+      "sha256": "7dfbac09f3f742ae01408898e59f2db632b5e4ccd7a27693915518795bc32c5f",
+      "conditions": 270,
+      "maximum_deviation_in_standard_errors": 3.2056223126316787,
+      "zero_standard_error_conditions": 0
+    },
+    {
+      "path": "outputs/population-analysis/seed-check/results.json",
+      "sha256": "3df0907060c6280cb87fd5af98f110fad9b01a3b2d3950ef8733f2bb6004966d",
+      "conditions": 270,
+      "maximum_deviation_in_standard_errors": 3.3861807107031106,
+      "zero_standard_error_conditions": 0
+    }
+  ],
+  "source_sha256": "51c725e3333b8783d32014bd2a4acbc5154b90916d8f7636522655d2ba68164e",
+  "proof": "project.md#묶음-순서-모델의-일반적-증명",
+  "limitation": "Finite checks are not a universal proof; ranks are a mathematical extension, not observed throws."
+}

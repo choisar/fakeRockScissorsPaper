@@ -7,12 +7,13 @@ from argparse import Namespace
 from pathlib import Path
 from fractions import Fraction
 from functools import lru_cache
-from itertools import product
+from itertools import product, permutations
 from random import Random
 from math import sqrt
 from analysis import summarize, holm_adjust
 from engine import GameConfig, play_game
-from exact import expected_colluder_catchers, exact_summary, first_branches
+from exact import (expected_colluder_catchers, exact_summary, first_branches,
+                   block_expected_catchers, block_rank_pmf, block_summary, check_block_model)
 from simulate import run
 from verify_outputs import verify, validate_game
 
@@ -39,6 +40,29 @@ def labelled_oracle(pool, colluders, k):
             value = sum(p < colluders for p in losers) + labelled_oracle(winners,colluders,k-len(losers))
         values.append(value)
     return sum(values,Fraction(0))/len(values)
+
+
+@lru_cache(None)
+def labelled_set_oracle(pool, colluders, k):
+    """Full catcher-set law by actual hand assignments, independently of block order."""
+    from collections import defaultdict
+    if k == 0:
+        return {(): Fraction(1)}
+    if k == len(pool):
+        return {tuple(sorted(pool)): Fraction(1)}
+    choices = [(0,) if p < colluders and any(q >= colluders for q in pool) else (0, 1, 2) for p in pool]
+    result, valid = defaultdict(Fraction), 0
+    for hands in product(*choices):
+        losing = {(0, 1): 1, (0, 2): 0, (1, 2): 2}.get(tuple(sorted(set(hands))))
+        if losing is None:
+            continue
+        valid += 1
+        losers = tuple(p for p, h in zip(pool, hands) if h == losing)
+        confirmed = () if len(losers) >= k else losers
+        following = losers if len(losers) >= k else tuple(p for p in pool if p not in losers)
+        for caught, probability in labelled_set_oracle(following, colluders, k-len(confirmed)).items():
+            result[tuple(sorted(confirmed+caught))] += probability
+    return {caught: probability/valid for caught, probability in result.items()}
 
 
 class ScriptedRandom:
@@ -306,6 +330,74 @@ class ThrowAnalysisTests(unittest.TestCase):
         finally:
             raw.write_bytes(original_raw)
             file.write_text(original)
+
+
+class BlockOrderTests(unittest.TestCase):
+    def test_full_catcher_set_law_matches_independent_hand_enumeration(self):
+        from collections import Counter
+        for n in range(2, 7):
+            for c in range(1, n):
+                # Enumerate labelled unit order and internal order, not the closed form.
+                counts = [Counter() for _ in range(n)]
+                total = 0
+                for units in permutations(range(c, n+1)):
+                    for members in permutations(range(c)):
+                        order = tuple(p for unit in units for p in (members if unit == n else (unit,)))
+                        total += 1
+                        for k in range(1, n):
+                            counts[k][tuple(sorted(order[:k]))] += 1
+                for k in range(1, n):
+                    with self.subTest(n=n, c=c, k=k):
+                        law = {caught: Fraction(count, total) for caught, count in counts[k].items()}
+                        self.assertEqual(law, labelled_set_oracle(tuple(range(n)), c, k))
+
+    def test_closed_form_rank_and_known_examples(self):
+        self.assertEqual(block_rank_pmf(3, 3), (Fraction(1, 12), Fraction(1, 6), Fraction(1, 4),
+                                               Fraction(1, 4), Fraction(1, 6), Fraction(1, 12)))
+        self.assertEqual(block_summary(3, 3, 2)['delta']['fraction'], '1/6')
+        self.assertEqual(block_summary(3, 3, 4)['delta']['fraction'], '-1/6')
+        self.assertEqual(block_summary(4, 1, 2)['delta']['fraction'], '1/8')
+        self.assertEqual(block_summary(4, 1, 3)['delta']['fraction'], '-1/8')
+        self.assertEqual(block_rank_pmf(1, 4), (Fraction(1, 5),)*5)
+
+    def test_finite_sweep_supplements_general_proof(self):
+        checked = check_block_model(20)
+        self.assertEqual(checked['mixed_populations'], 190)
+        self.assertEqual(checked['quota_conditions'], 2470)
+
+    def test_saved_summary_crosscheck_detects_disagreement(self):
+        import hashlib
+        data = dict(conditions=[dict(id='example', players=3, colluders=2, catchers=1, strategy='fixed',
+                    exact=dict(p_c=dict(fraction='3/4', value=.75), p_n=dict(fraction='1/2', value=.5),
+                               delta=dict(fraction='1/4', value=.25)),
+                    stats=dict(delta=.25, standard_error=.1))])
+        with tempfile.TemporaryDirectory() as folder:
+            file = Path(folder)/'results.json'
+            file.write_text(json.dumps(data))
+            result = check_block_model(2, [file])
+            self.assertEqual(result['observed_inputs'][0]['conditions'], 1)
+            self.assertEqual(result['observed_inputs'][0]['sha256'], hashlib.sha256(file.read_bytes()).hexdigest())
+            data['conditions'][0]['exact']['delta']['fraction'] = '1/2'
+            file.write_text(json.dumps(data))
+            with self.assertRaisesRegex(ValueError, 'saved exact values disagree'):
+                check_block_model(2, [file])
+            data['conditions'][0]['exact']['delta']['fraction'] = '1/4'
+            data['conditions'][0]['stats']['delta'] = 2
+            file.write_text(json.dumps(data))
+            with self.assertRaisesRegex(ValueError, 'observed deviation'):
+                check_block_model(2, [file])
+
+    def test_boundary_cases_and_arbitrary_size_closed_form(self):
+        for c, m in [(1, 0), (5, 0), (2, 3), (9, 7)]:
+            self.assertEqual(block_expected_catchers(c, m, 0), 0)
+            self.assertEqual(block_expected_catchers(c, m, c+m), c)
+        self.assertEqual(block_expected_catchers(5, 0, 3), 3)
+        self.assertEqual(block_expected_catchers(10**12, 10**12, 10**12), Fraction(10**12, 2))
+        for args in [(0, 2, 1), (2, -1, 1), (2, 2, -1), (2, 2, 5), (True, 2, 1), (2, 2, 1.5)]:
+            with self.subTest(args=args), self.assertRaises(ValueError):
+                block_expected_catchers(*args)
+        with self.assertRaises(ValueError):
+            block_summary(5, 0, 2)
 
 
 if __name__ == '__main__':

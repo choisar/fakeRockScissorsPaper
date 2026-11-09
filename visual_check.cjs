@@ -52,6 +52,9 @@ async function main() {
         await page.selectOption('#strategy', c.strategy);
         await page.locator('#quota').fill(String(c.catchers));
         assert.ok(await page.locator('#branches tr').count());
+        if (await page.locator('#block-theory').count()) {
+          assert.match(await page.locator('#block-theory').textContent(), c.strategy === 'independent' ? /묶음 공식을 적용하지 않/ : /수학적 도출값/);
+        }
         if (await page.locator('#mechanism').count()) {
           assert.ok((await page.locator('#mechanism').textContent()).length > 20);
           assert.match(await page.locator('#mechanism-numbers').textContent(), /합계/);
