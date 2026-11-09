@@ -57,7 +57,8 @@ def first_branches(c, n, k):
     valid = branches(c, n)
     total = sum(w for _, _, w in valid)
     return [dict(losing_c=lc, losing_n=ln, probability=str(Fraction(w, total)),
-                 next_state=[lc, ln, k] if lc + ln >= k
-                 else [c-lc, n-ln, k-lc-ln],
-                 confirmed_c=0 if lc + ln >= k else lc)
+                 terminal=lc + ln == k,
+                 next_state=None if lc + ln == k else
+                 ([lc, ln, k] if lc + ln > k else [c-lc, n-ln, k-lc-ln]),
+                 confirmed_c=0 if lc + ln > k else lc)
             for lc, ln, w in valid]

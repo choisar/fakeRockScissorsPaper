@@ -1,0 +1,16 @@
+{
+  "outputs/validated-main": {
+    "conditions": 10,
+    "games_per_arm": 100000,
+    "maximum_exact_deviation_in_standard_errors": 2.2352534430816897,
+    "zero_variance_conditions": [],
+    "checks": "CSV invariants; all statistics including CI and Holm; exact fractions and branches; trace and 100-game seed replay; source hashes; individual rates within 6 SE of theory"
+  },
+  "outputs/validated-seed-check": {
+    "conditions": 10,
+    "games_per_arm": 20000,
+    "maximum_exact_deviation_in_standard_errors": 1.751514147842825,
+    "zero_variance_conditions": [],
+    "checks": "CSV invariants; all statistics including CI and Holm; exact fractions and branches; trace and 100-game seed replay; source hashes; individual rates within 6 SE of theory"
+  }
+}

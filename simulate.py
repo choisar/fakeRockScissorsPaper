@@ -21,7 +21,7 @@ def arguments():
     p.add_argument('--catchers', type=int, nargs='+', default=[1, 2])
     p.add_argument('--trials', type=int, default=100_000)
     p.add_argument('--seed', type=int, default=20261109)
-    p.add_argument('--output', type=Path, default=Path(__file__).parent / 'outputs' / 'main')
+    p.add_argument('--output', type=Path, default=Path(__file__).parent / 'outputs' / 'validated-main')
     a = p.parse_args()
     if a.trials < 2 or any(not 2 <= n <= 20 for n in a.players):
         p.error('trials >= 2 and 2 <= players <= 20 required')

@@ -26,6 +26,10 @@ def play_game(config, rng=None, trace=False):
         needed = config.target_catchers - len(selected)
         if needed == len(pool):
             selected.extend(pool)
+            if trace:
+                events.append(dict(pool=pool, hands=[], released=False, losers=pool,
+                                   action='남은 참가자 전원을 술래로 확정, 선정 종료',
+                                   next_pool=None, selected=selected.copy(), terminal=True))
             break
         release = all(p < config.colluders for p in pool)
         hands = [rng.randrange(3) if release or p >= config.colluders else 0 for p in pool]
@@ -40,6 +44,10 @@ def play_game(config, rng=None, trace=False):
         elif len(losers) > needed:
             pool = losers
             action = '패자 과다: 승자는 생존 확정, 패자끼리 재선정'
+        elif len(losers) == needed:
+            selected.extend(losers)
+            pool = None
+            action = '패자를 술래로 확정, 선정 종료'
         else:
             selected.extend(losers)
             pool = [p for p in pool if p not in losers]
@@ -47,5 +55,5 @@ def play_game(config, rng=None, trace=False):
         if trace:
             events.append(dict(pool=before, hands=hands, released=release,
                                losers=losers, action=action, next_pool=pool,
-                               selected=selected.copy()))
+                               selected=selected.copy(), terminal=pool is None))
     return dict(catchers=sorted(selected), events=events)

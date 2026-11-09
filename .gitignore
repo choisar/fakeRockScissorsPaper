@@ -1,3 +1,22 @@
-__pycache__
+# Python and local development caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+node_modules/
+.DS_Store
 
+# Credentials and private application documents
+.env
+.env.*
+!.env.example
 APPLICATION_DRAFT.md
+.private/
+
+# Reproducible bulk experiment artifacts; keep summaries and HTML reports
+outputs/**/*.csv
+outputs/**/*.csv.gz
+outputs/**/*.jsonl
+outputs/**/*.jsonl.gz
+outputs/**/*.png
