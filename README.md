@@ -8,17 +8,35 @@
 
 [이슈 #1](https://github.com/choisar/fakeRockScissorsPaper/issues/1)의 구현은 **실제 투구 저장 → 원자료 재집계 → 관측 분기와 최종 결과 연결** 순서로 진행한다.
 
-- **[최신 투구 분석 리포트](outputs/throw-analysis/main/report-explained.html)**: 세 선택 방식, 술래 정원별 관측 차이와 신뢰구간, 분기별 기여도, 실제 게임 재생
-- [주 실행 요약](outputs/throw-analysis/main/results.json) · [다른 시드 요약](outputs/throw-analysis/seed-check/results.json)
+- **[최신 투구 분석 리포트](outputs/population-analysis/main/report.html)**: 세 선택 방식, 술래 정원별 관측 차이와 신뢰구간, 분기별 기여도, 실제 게임 재생
+- [주 실행 요약](outputs/population-analysis/main/results.json) · [다른 시드 요약](outputs/population-analysis/seed-check/results.json)
 - [검증 기록](VALIDATION.md) · [규칙·기록·집계 명세](project.md)
 
-6명 중 같은 3명을 비교집단으로 두고 술래를 1~5명 선정한다. 같은 손 고정, 매 투구 공동 무작위 선택, 독립 무작위 선택을 비교한다. 공동/독립 무작위는 개인별 손 선택 확률이 같고 선택의 결합만 다르다. 공동 집단만 남으면 기존처럼 독립 선택한다.
+초기 심층 분석은 6명 중 같은 3명을 비교집단으로 두고 술래를 1~5명 선정했다. 확장 분석은 총원 3~7명의 모든 유효한 비교집단 수와 정원을 다룬다. 같은 손 고정, 매 투구 공동 무작위 선택, 독립 무작위 선택을 비교한다. 공동/독립 무작위는 개인별 손 선택 확률이 같고 선택의 결합만 다르다. 공동 집단만 남으면 기존처럼 독립 선택한다.
 
 각 게임의 첫 유효 투구를 과다·일치·미달로 나누고 발생 비율, 즉시 확정 인원, 해당 경로의 최종 차이와 전체 차이에 대한 가중 기여도를 집계한다. 이 분해는 관측 경로의 구성이며 분기 자체의 인과 효과가 아니다. 후속 투구는 현재 참가자 구성과 정원별로 집계한다. 리포트의 점과 오차막대는 실제 게임에서 구하며 정확 계산은 별도 검산 기준이다. 관측하지 않은 전체 순위는 그래프로 제시하지 않는다.
 
+## 다른 인원 구성에서 확인하기
+
+총원 3~7명, 비교집단 1~(총원−1)명, 술래 1~(총원−1)명의 모든 조합을 세 전략으로 실행했다. 인원 구성 20개·정원 포함 90개 조건·전략 포함 270개 조합이다. 주 시드에서 조합별 1만 게임, 확인 시드에서 2천 게임을 기록했다. 1명 집단은 결합 효과 없는 대조로 따로 집계한다.
+
+최신 리포트의 전체 조건 표에서 정원이 절반 미만·일치·초과일 때의 관측 차이를 비교하고, 각 값을 눌러 실제 분기와 게임 기록으로 이동할 수 있다. 점 추정의 부호, 점별 신뢰구간, Holm 보정 결과는 별도 판단이다. 작은 효과에서 구간이 0을 포함하거나 확인 시드의 점 추정 부호가 달라진 경우도 그대로 공개한다.
+
+주 실행에서 공동 무작위 선택·2명 이상 집단의 관측 결과는 다음과 같았다.
+
+| 술래 정원 | 조건 수 | 관측 방향 | 점별 95% 구간 | Holm 보정 p<0.05 |
+|---|---:|---|---|---:|
+| 절반 미만 | 32 | 모두 양수 | 32개 모두 양수 | 31개 |
+| 정확히 절반 | 6 | 0 부근의 양수·음수 | 모두 0 포함 | 0개 |
+| 절반 초과 | 32 | 모두 음수 | 32개 모두 음수 | 31개 |
+
+독립 선택 90개 조건과 비교집단 1명인 세 전략의 조건들에서는 Holm 보정 후 유의한 차이가 검출되지 않았다. 이는 동등성 증명이 아니다. 확인 시드에서 7명·공동 선택 2명·술래 4명은 관측 차이가 +1.985%p였지만 95% 구간이 −0.806~+4.776%p로 양쪽 부호를 포함했다. 이 사례도 삭제하지 않았으며, 작은 효과의 개별 방향은 표본 오차에 민감함을 명시한다.
+
+**모든 반전을 첫 정원 일치 경로로 설명할 수는 없다.** 예를 들어 5명·공동 선택 4명에서는 술래 2·3명 모두 첫 정원 일치가 불가능하다. 과다·미달 경로가 같은 승패를 서로 다른 최종 부담으로 바꾸는지 확인해야 한다. [확장 실험 명세](project.md#참가자담합자-수-확장-실험)에 범위와 지표, 이 사례의 경로별 설명을 정리했다. 유한한 인원 범위의 실험이며 일반적 증명을 대신하지 않는다.
+
 ## 핵심 발견: 같은 공동 선택도 정원에 따라 유불리가 뒤집힌다
 
-**6명·비교집단 3명에서 공동 무작위 선택은 술래 2명일 때 유리하고, 4명일 때 불리했다.** 독립 선택은 같은 정원에서 집단 간 관측 차이가 0 부근이었다. 현재 투구 분석의 결론은 이 참가자·집단 구성에 한정한다.
+**6명·비교집단 3명에서 공동 무작위 선택은 술래 2명일 때 유리하고, 4명일 때 불리했다.** 독립 선택은 같은 정원에서 집단 간 관측 차이가 0 부근이었다. 이 표는 초기 6명·3명 심층 분석의 대표 결과이며, 아래 확장 분석과 구분한다.
 
 | 술래 | 공동 선택의 관측 생존율 차이 | 정원 일치 경로의 기여 | 전체 해석 |
 |---:|---:|---:|---|
@@ -63,19 +81,19 @@ Python 3.10 이상. 실험·수치 검증에는 외부 패키지가 필요 없�
 
 ```sh
 python -m unittest test_research -v
-python simulate.py --throw-analysis --players 6 --colluders 3 --catchers 1 2 3 4 5 --seed 20261109 --trials 100000 --output outputs/my-main
-python simulate.py --throw-analysis --players 6 --colluders 3 --catchers 1 2 3 4 5 --seed 20261110 --trials 20000 --output outputs/my-seed-check
+python simulate.py --throw-analysis --players 3 4 5 6 7 --colluders 1 2 3 4 5 6 --catchers 1 2 3 4 5 6 --seed 20261109 --trials 10000 --output outputs/my-main
+python simulate.py --throw-analysis --players 3 4 5 6 7 --colluders 1 2 3 4 5 6 --catchers 1 2 3 4 5 6 --seed 20261110 --trials 2000 --output outputs/my-seed-check
 python verify_outputs.py outputs/my-main outputs/my-seed-check --output outputs/my-verification.json
 ```
 
-위 명령은 5개 정원 × 3가지 선택 방식으로 15개 조합을 실행한다. 빠르게 확인하려면 `--trials 1000`을 사용한다. `--throw-analysis`를 생략하면 이전의 실험군·대조군 실행 방식이며 기본 10개 조건은 참가자 4·6명, 담합자 2·3·4명, 술래 1·2명 중 유효한 조합이다. 한 조건만 선택하려면 `--players 6 --colluders 3 --catchers 2`를 추가한다. 옵션: `python simulate.py --help`, `python verify_outputs.py --help`.
+위 명령은 유효한 인원·정원·전략 270개 조합을 실행한다. 빠르게 확인하려면 `--trials 1000`을 사용한다. `--throw-analysis`를 생략하면 이전의 실험군·대조군 실행 방식이며 기본 10개 조건은 참가자 4·6명, 담합자 2·3·4명, 술래 1·2명 중 유효한 조합이다. 한 조건만 선택하려면 `--players 6 --colluders 3 --catchers 2`를 추가한다. 옵션: `python simulate.py --help`, `python verify_outputs.py --help`.
 
 실험은 비어 있지 않은 출력 폴더를 거부한다. 검증 결과 파일도 기존 파일을 덮어쓰지 않는다. 같은 옵션·시드·Python 버전·소스에서는 CSV와 수치 결과가 재현되며 실행 시각 등 메타데이터는 달라진다. 요약 JSON·HTML·검증 기록은 Git으로 관리하고, 대용량 CSV·투구 로그·스크린샷은 로컬 생성물로 제외한다. 저장소를 새로 받으면 위 명령으로 원자료를 생성한 뒤 검증한다. 새 구현은 표본분산 0의 추론 불가 상태와 정원 충족 종료를 명시한다.
 
 선택적인 화면 검사는 Playwright와 Chromium 계열 브라우저가 필요하다. 자동 탐색하거나 `--browser`로 실행 파일, `--channel`로 설치 채널을 지정한다.
 
 ```sh
-node visual_check.cjs outputs/throw-analysis/main --report report-explained.html --artifacts /tmp/rps-browser-check
+node visual_check.cjs outputs/population-analysis/main --artifacts /tmp/rps-browser-check
 # 예: node visual_check.cjs outputs/my-main --browser /usr/bin/chromium
 ```
 

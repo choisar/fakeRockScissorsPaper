@@ -116,3 +116,25 @@ def analyze_log(path, players, colluders, catchers, on_game=None):
                                       released=key[4], **value) for key, value in sorted(states.items())],
                 throws=throws, draws=draws, released_throws=released_throws,
                 hand_counts=hand_counts, same_hand_pairs=same_pairs, eligible_pairs=active_pairs)
+
+
+def summarize_populations(conditions):
+    """Describe observed directions separately from pointwise and Holm inference."""
+    from collections import defaultdict
+    counts = defaultdict(lambda: dict(conditions=0, positive_estimates=0, negative_estimates=0,
+        zero_estimates=0, positive_ci=0, negative_ci=0, contains_zero=0,
+        unavailable=0, holm_significant=0))
+    for c in conditions:
+        region = 'below_half' if 2*c['catchers'] < c['players'] else (
+            'above_half' if 2*c['catchers'] > c['players'] else 'half')
+        key = (c['strategy'], 'single' if c['colluders'] == 1 else 'multiple', region)
+        item, stats = counts[key], c['stats']
+        item['conditions'] += 1
+        delta, ci = stats['delta'], stats['ci95']
+        item['positive_estimates' if delta > 0 else 'negative_estimates' if delta < 0 else 'zero_estimates'] += 1
+        item['unavailable' if ci is None else 'positive_ci' if ci[0] > 0 else
+             'negative_ci' if ci[1] < 0 else 'contains_zero'] += 1
+        p = stats['p_value_holm']
+        item['holm_significant'] += p is not None and p < .05
+    return [dict(strategy=key[0], cohort=key[1], quota_region=key[2], **value)
+            for key, value in sorted(counts.items())]

@@ -60,10 +60,20 @@ async function main() {
         }
         assert.equal(await page.locator('#effects circle').count(), data.conditions.filter(r => r.players === c.players && r.colluders === c.colluders).length);
         assert.match(await page.locator('#contribution-sum').textContent(), /전체 관측 차이/);
+        if (await page.locator('#coverage').count()) {
+          assert.equal(await page.locator('#coverage tr').count(), await page.locator('#population option').count());
+          if (c.colluders > c.catchers && c.catchers > c.players-c.colluders && c.strategy !== 'independent')
+            assert.match(await page.locator('#mechanism').textContent(), /불가능/);
+          if (c.colluders === 1) assert.match(await page.locator('#mechanism').textContent(), /여러 사람의 선택을 묶는 효과가 없/);
+        }
         await page.locator('#branches button').first().click();
         assert.match(await page.locator('#game-meta').textContent(), /게임/);
         while (await page.locator('#next').isEnabled()) await page.locator('#next').click();
         assert.match(await page.locator('#transition').textContent(), /선정 종료/);
+      }
+      if (await page.locator('#coverage button').count()) {
+        await page.locator('#coverage button').first().click();
+        assert.match(await page.locator('#game-meta').textContent(), /게임/);
       }
       await page.evaluate(() => { current.stats.ci95 = null; current.stats.p_value_holm = null; render(); });
       assert.match(await page.locator('#ci').textContent(), /추론 불가/);

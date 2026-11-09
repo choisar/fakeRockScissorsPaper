@@ -1,0 +1,9 @@
+{
+  "outputs/population-analysis/seed-check": {
+    "conditions": 270,
+    "games_per_condition": 2000,
+    "total_games": 540000,
+    "maximum_exact_deviation_in_standard_errors": 3.3861807107031106,
+    "checks": "all raw throws and transitions; final outcomes; independent replay; raw/source hashes; reconstructed statistics, branches, states and examples; contribution sum; exact probabilities"
+  }
+}

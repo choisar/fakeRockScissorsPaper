@@ -229,6 +229,22 @@ class ThrowAnalysisTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.temporary.cleanup()
 
+    def test_population_summary_separates_direction_and_uncertainty(self):
+        from analysis import summarize_populations
+        def case(delta, ci, p, k=1, c=2):
+            return dict(players=5, colluders=c, catchers=k, strategy='shared_random',
+                        stats=dict(delta=delta, ci95=ci, p_value_holm=p))
+        summary = summarize_populations([case(.02, [-.01, .05], .7), case(.2, [.1, .3], .001),
+                                         case(-.2, [-.3, -.1], .001, k=4), case(0, None, None, c=1)])
+        below = next(s for s in summary if s['cohort']=='multiple' and s['quota_region']=='below_half')
+        self.assertEqual(below['conditions'], 2)
+        self.assertEqual(below['positive_estimates'], 2)
+        self.assertEqual(below['positive_ci'], 1)
+        self.assertEqual(below['contains_zero'], 1)
+        self.assertEqual(below['holm_significant'], 1)
+        single = next(s for s in summary if s['cohort']=='single')
+        self.assertEqual(single['unavailable'], 1)
+
     def test_observation_does_not_change_results_or_rng(self):
         for strategy in ('fixed', 'shared_random', 'independent'):
             for k in range(1, 6):

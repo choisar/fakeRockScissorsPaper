@@ -1,0 +1,9 @@
+{
+  "outputs/population-analysis/main": {
+    "conditions": 270,
+    "games_per_condition": 10000,
+    "total_games": 2700000,
+    "maximum_exact_deviation_in_standard_errors": 3.2056223126316787,
+    "checks": "all raw throws and transitions; final outcomes; independent replay; raw/source hashes; reconstructed statistics, branches, states and examples; contribution sum; exact probabilities"
+  }
+}

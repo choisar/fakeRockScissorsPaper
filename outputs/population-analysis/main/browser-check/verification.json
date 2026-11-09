@@ -1,0 +1,22 @@
+{
+  "report": "outputs/population-analysis/main/report.html",
+  "browser": "156.0.8078.79",
+  "conditions": 270,
+  "desktop": [
+    1440,
+    1000
+  ],
+  "mobile": [
+    390,
+    844
+  ],
+  "pageErrors": [],
+  "horizontalOverflow": false,
+  "syntheticDisplayChecks": [
+    "null inference",
+    "underflow p-value"
+  ],
+  "terminalBranches": true,
+  "mode": "throw-analysis",
+  "observedReplayAndBranches": true
+}

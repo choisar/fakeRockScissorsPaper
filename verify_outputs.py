@@ -157,7 +157,7 @@ def validate_game(events, caught, players, group, catchers, strategy):
 
 
 def verify_throw_analysis(folder, data):
-    from analysis import analyze_log
+    from analysis import analyze_log, summarize_populations
     from fractions import Fraction
     options = data['metadata']['options']
     expected_ids = {f'n{n}_c{c}_k{k}_{strategy}' for n, c, k in
@@ -213,6 +213,7 @@ def verify_throw_analysis(folder, data):
         raw_p.append(observed['stats']['p_value_normal'])
     for c, p in zip(conditions, holm_adjust(raw_p)):
         same(c['stats']['p_value_holm'], p, 'Holm adjustment', probability=True)
+    require(data.get('population_summary') == summarize_populations(conditions), 'population summary')
     return dict(conditions=len(conditions), games_per_condition=data['metadata']['trials'],
                 total_games=len(conditions)*data['metadata']['trials'],
                 maximum_exact_deviation_in_standard_errors=maximum_z,

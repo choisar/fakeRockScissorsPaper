@@ -91,7 +91,7 @@ def run(a):
 def run_throw_analysis(a):
     import gzip
     from fractions import Fraction
-    from analysis import analyze_log
+    from analysis import analyze_log, summarize_populations
 
     configs = sorted(set(product(a.players, a.colluders, a.catchers)))
     configs = [(n, c, k) for n, c, k in configs if 0 < c < n and 0 < k < n]
@@ -141,7 +141,8 @@ def run_throw_analysis(a):
     data = dict(mode='throw-analysis', schema_version=2, metadata=dict(seed=a.seed, trials=a.trials,
                 created_utc=datetime.now(timezone.utc).isoformat(), python=platform.python_version(),
                 platform=platform.platform(), source_sha256=hashes,
-                options=dict(players=a.players, colluders=a.colluders, catchers=a.catchers)), conditions=records)
+                options=dict(players=a.players, colluders=a.colluders, catchers=a.catchers)),
+                conditions=records, population_summary=summarize_populations(records))
     (a.output/'results.json').write_text(json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False), encoding='utf-8')
     build_report(data, a.output/'report.html')
     return data
