@@ -8,7 +8,7 @@
 
 - **[개선된 인터랙티브 리포트](outputs/main/report.html)**: 조건 선택, 생존율 차이와 신뢰구간, 정확 확률, 첫 투구의 분기, 개인별 대조군과 게임 예시
 - [최종 분석 데이터](outputs/main/results.json) · [다른 시드 확인 데이터](outputs/seed-check/results.json)
-- [실험 명세와 계산 방법](project.md) · [포트폴리오 설명](PORTFOLIO.md) · [자기소개서 초안](APPLICATION_DRAFT.md)
+- [실험 명세와 계산 방법](project.md) · [포트폴리오 설명](PORTFOLIO.md)
 
 정확 계산 결과(독립·균등한 비담합자, 고정 손 담합자, 아래 선정 규칙 기준):
 
