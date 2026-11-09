@@ -1,0 +1,2124 @@
+{
+  "metadata": {
+    "seed": 20261110,
+    "trials": 20000,
+    "created_utc": "2026-11-09T08:43:55.101803+00:00",
+    "python": "3.12.14",
+    "implementation": "CPython",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "dependencies": "Python standard library only",
+    "source_sha256": {
+      "engine.py": "9d51e819fd305e4acc13712457b509415071c08a15e77e84a93ca277b7e6aa12",
+      "exact.py": "1d8d5c1b4b29cf6eba8a572a2c4d1e4f1b7b78baada2db98666173f7b0532eb6",
+      "analysis.py": "bdbf5bad3cf97bbb0191d48288f25d653ba8773d1ef64df651c8f385b09518f8",
+      "simulate.py": "2af4ee5297d30639174da021c45cf7b45f1710882a1df55668b75b48f40ebbf3",
+      "report.py": "71b7b1fdf6cbcb5816960bb6375e3cfee7e8fb6995c5eeab55f3a5471b8519b8"
+    },
+    "options": {
+      "players": [
+        4,
+        6
+      ],
+      "colluders": [
+        2,
+        3,
+        4
+      ],
+      "catchers": [
+        1,
+        2
+      ]
+    },
+    "video_url": "https://youtu.be/YJckrnOUaoM",
+    "video_status": "User-provided inspiration; video rules not independently verified"
+  },
+  "conditions": [
+    {
+      "id": "n4_c2_k1",
+      "players": 4,
+      "colluders": 2,
+      "catchers": 1,
+      "trials": 20000,
+      "seed": "20261110:4:2:1",
+      "stats": {
+        "p_c": 0.833375,
+        "p_n": 0.666625,
+        "delta": 0.16675,
+        "standard_error": 0.0033332082726510565,
+        "ci95": [
+          0.16021691178560393,
+          0.17328308821439609
+        ],
+        "p_value_normal": 0.0,
+        "baseline": 0.75,
+        "p_value_holm": 0.0
+      },
+      "exact": {
+        "p_c": {
+          "fraction": "5/6",
+          "value": 0.8333333333333334
+        },
+        "p_n": {
+          "fraction": "2/3",
+          "value": 0.6666666666666666
+        },
+        "delta": {
+          "fraction": "1/6",
+          "value": 0.16666666666666666
+        }
+      },
+      "individual_survival": [
+        0.83495,
+        0.8318,
+        0.6678,
+        0.66545
+      ],
+      "control_individual_survival": [
+        0.75225,
+        0.748,
+        0.747,
+        0.75275
+      ],
+      "first_branches": [
+        {
+          "losing_c": 0,
+          "losing_n": 1,
+          "probability": "1/3",
+          "next_state": [
+            0,
+            1,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 0,
+          "losing_n": 2,
+          "probability": "1/6",
+          "next_state": [
+            0,
+            2,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 2,
+          "losing_n": 0,
+          "probability": "1/6",
+          "next_state": [
+            2,
+            0,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 2,
+          "losing_n": 1,
+          "probability": "1/3",
+          "next_state": [
+            2,
+            1,
+            1
+          ],
+          "confirmed_c": 0
+        }
+      ],
+      "sample_game": {
+        "catchers": [
+          3
+        ],
+        "events": [
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "released": false,
+            "losers": [
+              3
+            ],
+            "action": "패자를 술래로 확정, 부족한 정원은 직전 승자에서 선정",
+            "next_pool": [
+              0,
+              1,
+              2
+            ],
+            "selected": [
+              3
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "n4_c2_k2",
+      "players": 4,
+      "colluders": 2,
+      "catchers": 2,
+      "trials": 20000,
+      "seed": "20261110:4:2:2",
+      "stats": {
+        "p_c": 0.5018,
+        "p_n": 0.4982,
+        "delta": 0.0036,
+        "standard_error": 0.0057546509712049455,
+        "ci95": [
+          -0.007679115903561694,
+          0.014879115903561693
+        ],
+        "p_value_normal": 0.5315898395526244,
+        "baseline": 0.5,
+        "p_value_holm": 1.0
+      },
+      "exact": {
+        "p_c": {
+          "fraction": "1/2",
+          "value": 0.5
+        },
+        "p_n": {
+          "fraction": "1/2",
+          "value": 0.5
+        },
+        "delta": {
+          "fraction": "0",
+          "value": 0.0
+        }
+      },
+      "individual_survival": [
+        0.5016,
+        0.502,
+        0.49675,
+        0.49965000000000004
+      ],
+      "control_individual_survival": [
+        0.49570000000000003,
+        0.5011,
+        0.5045,
+        0.49870000000000003
+      ],
+      "first_branches": [
+        {
+          "losing_c": 0,
+          "losing_n": 1,
+          "probability": "1/3",
+          "next_state": [
+            2,
+            1,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 0,
+          "losing_n": 2,
+          "probability": "1/6",
+          "next_state": [
+            0,
+            2,
+            2
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 2,
+          "losing_n": 0,
+          "probability": "1/6",
+          "next_state": [
+            2,
+            0,
+            2
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 2,
+          "losing_n": 1,
+          "probability": "1/3",
+          "next_state": [
+            2,
+            1,
+            2
+          ],
+          "confirmed_c": 0
+        }
+      ],
+      "sample_game": {
+        "catchers": [
+          1,
+          3
+        ],
+        "events": [
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "hands": [
+              0,
+              0,
+              2,
+              1
+            ],
+            "released": false,
+            "losers": [],
+            "action": "무승부: 동일 참가자로 재투구",
+            "next_pool": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "selected": []
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "released": false,
+            "losers": [
+              3
+            ],
+            "action": "패자를 술래로 확정, 부족한 정원은 직전 승자에서 선정",
+            "next_pool": [
+              0,
+              1,
+              2
+            ],
+            "selected": [
+              3
+            ]
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2
+            ],
+            "hands": [
+              0,
+              0,
+              0
+            ],
+            "released": false,
+            "losers": [],
+            "action": "무승부: 동일 참가자로 재투구",
+            "next_pool": [
+              0,
+              1,
+              2
+            ],
+            "selected": [
+              3
+            ]
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2
+            ],
+            "hands": [
+              0,
+              0,
+              2
+            ],
+            "released": false,
+            "losers": [
+              0,
+              1
+            ],
+            "action": "패자 과다: 승자는 생존 확정, 패자끼리 재선정",
+            "next_pool": [
+              0,
+              1
+            ],
+            "selected": [
+              3
+            ]
+          },
+          {
+            "pool": [
+              0,
+              1
+            ],
+            "hands": [
+              1,
+              2
+            ],
+            "released": true,
+            "losers": [
+              1
+            ],
+            "action": "패자를 술래로 확정, 부족한 정원은 직전 승자에서 선정",
+            "next_pool": [
+              0
+            ],
+            "selected": [
+              3,
+              1
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "n4_c3_k1",
+      "players": 4,
+      "colluders": 3,
+      "catchers": 1,
+      "trials": 20000,
+      "seed": "20261110:4:3:1",
+      "stats": {
+        "p_c": 0.8324666666666667,
+        "p_n": 0.5026,
+        "delta": 0.32986666666666664,
+        "standard_error": 0.004714099327544641,
+        "ci95": [
+          0.3206270319846791,
+          0.33910630134865416
+        ],
+        "p_value_normal": 0.0,
+        "baseline": 0.75,
+        "p_value_holm": 0.0
+      },
+      "exact": {
+        "p_c": {
+          "fraction": "5/6",
+          "value": 0.8333333333333334
+        },
+        "p_n": {
+          "fraction": "1/2",
+          "value": 0.5
+        },
+        "delta": {
+          "fraction": "1/3",
+          "value": 0.3333333333333333
+        }
+      },
+      "individual_survival": [
+        0.82695,
+        0.8325,
+        0.83795,
+        0.5025999999999999
+      ],
+      "control_individual_survival": [
+        0.7544500000000001,
+        0.7483,
+        0.7451,
+        0.75215
+      ],
+      "first_branches": [
+        {
+          "losing_c": 0,
+          "losing_n": 1,
+          "probability": "1/2",
+          "next_state": [
+            0,
+            1,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 3,
+          "losing_n": 0,
+          "probability": "1/2",
+          "next_state": [
+            3,
+            0,
+            1
+          ],
+          "confirmed_c": 0
+        }
+      ],
+      "sample_game": {
+        "catchers": [
+          3
+        ],
+        "events": [
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "released": false,
+            "losers": [
+              3
+            ],
+            "action": "패자를 술래로 확정, 부족한 정원은 직전 승자에서 선정",
+            "next_pool": [
+              0,
+              1,
+              2
+            ],
+            "selected": [
+              3
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "n4_c3_k2",
+      "players": 4,
+      "colluders": 3,
+      "catchers": 2,
+      "trials": 20000,
+      "seed": "20261110:4:3:2",
+      "stats": {
+        "p_c": 0.49943333333333334,
+        "p_n": 0.5017,
+        "delta": -0.0022666666666667223,
+        "standard_error": 0.004714135815518863,
+        "ci95": [
+          -0.011506372865083693,
+          0.006973039531750248
+        ],
+        "p_value_normal": 0.6306420395617784,
+        "baseline": 0.5,
+        "p_value_holm": 1.0
+      },
+      "exact": {
+        "p_c": {
+          "fraction": "1/2",
+          "value": 0.5
+        },
+        "p_n": {
+          "fraction": "1/2",
+          "value": 0.5
+        },
+        "delta": {
+          "fraction": "0",
+          "value": 0.0
+        }
+      },
+      "individual_survival": [
+        0.5004,
+        0.49985,
+        0.49805,
+        0.5017
+      ],
+      "control_individual_survival": [
+        0.49355000000000004,
+        0.49950000000000006,
+        0.5035499999999999,
+        0.5034000000000001
+      ],
+      "first_branches": [
+        {
+          "losing_c": 0,
+          "losing_n": 1,
+          "probability": "1/2",
+          "next_state": [
+            3,
+            0,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 3,
+          "losing_n": 0,
+          "probability": "1/2",
+          "next_state": [
+            3,
+            0,
+            2
+          ],
+          "confirmed_c": 0
+        }
+      ],
+      "sample_game": {
+        "catchers": [
+          0,
+          2
+        ],
+        "events": [
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              2
+            ],
+            "released": false,
+            "losers": [
+              0,
+              1,
+              2
+            ],
+            "action": "패자 과다: 승자는 생존 확정, 패자끼리 재선정",
+            "next_pool": [
+              0,
+              1,
+              2
+            ],
+            "selected": []
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2
+            ],
+            "hands": [
+              0,
+              2,
+              0
+            ],
+            "released": true,
+            "losers": [
+              0,
+              2
+            ],
+            "action": "패자를 술래로 확정, 부족한 정원은 직전 승자에서 선정",
+            "next_pool": [
+              1
+            ],
+            "selected": [
+              0,
+              2
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "n6_c2_k1",
+      "players": 6,
+      "colluders": 2,
+      "catchers": 1,
+      "trials": 20000,
+      "seed": "20261110:6:2:1",
+      "stats": {
+        "p_c": 0.8975,
+        "p_n": 0.80125,
+        "delta": 0.09625,
+        "standard_error": 0.002141004687069485,
+        "ci95": [
+          0.0920536308133438,
+          0.1004463691866562
+        ],
+        "p_value_normal": 0.0,
+        "baseline": 0.8333333333333334,
+        "p_value_holm": 0.0
+      },
+      "exact": {
+        "p_c": {
+          "fraction": "9/10",
+          "value": 0.9
+        },
+        "p_n": {
+          "fraction": "4/5",
+          "value": 0.8
+        },
+        "delta": {
+          "fraction": "1/10",
+          "value": 0.1
+        }
+      },
+      "individual_survival": [
+        0.8956,
+        0.8994,
+        0.8008,
+        0.80275,
+        0.80205,
+        0.7994
+      ],
+      "control_individual_survival": [
+        0.8311999999999999,
+        0.8346,
+        0.8364,
+        0.8313,
+        0.83435,
+        0.83215
+      ],
+      "first_branches": [
+        {
+          "losing_c": 0,
+          "losing_n": 1,
+          "probability": "2/15",
+          "next_state": [
+            0,
+            1,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 0,
+          "losing_n": 2,
+          "probability": "1/5",
+          "next_state": [
+            0,
+            2,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 0,
+          "losing_n": 3,
+          "probability": "2/15",
+          "next_state": [
+            0,
+            3,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 0,
+          "losing_n": 4,
+          "probability": "1/30",
+          "next_state": [
+            0,
+            4,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 2,
+          "losing_n": 0,
+          "probability": "1/30",
+          "next_state": [
+            2,
+            0,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 2,
+          "losing_n": 1,
+          "probability": "2/15",
+          "next_state": [
+            2,
+            1,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 2,
+          "losing_n": 2,
+          "probability": "1/5",
+          "next_state": [
+            2,
+            2,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 2,
+          "losing_n": 3,
+          "probability": "2/15",
+          "next_state": [
+            2,
+            3,
+            1
+          ],
+          "confirmed_c": 0
+        }
+      ],
+      "sample_game": {
+        "catchers": [
+          2
+        ],
+        "events": [
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              2
+            ],
+            "released": false,
+            "losers": [],
+            "action": "무승부: 동일 참가자로 재투구",
+            "next_pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "selected": []
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              1,
+              0,
+              0,
+              0
+            ],
+            "released": false,
+            "losers": [
+              2
+            ],
+            "action": "패자를 술래로 확정, 부족한 정원은 직전 승자에서 선정",
+            "next_pool": [
+              0,
+              1,
+              3,
+              4,
+              5
+            ],
+            "selected": [
+              2
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "n6_c2_k2",
+      "players": 6,
+      "colluders": 2,
+      "catchers": 2,
+      "trials": 20000,
+      "seed": "20261110:6:2:2",
+      "stats": {
+        "p_c": 0.70155,
+        "p_n": 0.649225,
+        "delta": 0.052325,
+        "standard_error": 0.004228504313724482,
+        "ci95": [
+          0.04403713154510002,
+          0.060612868454899986
+        ],
+        "p_value_normal": 3.597871239807025e-35,
+        "baseline": 0.6666666666666666,
+        "p_value_holm": 1.0793613719421076e-34
+      },
+      "exact": {
+        "p_c": {
+          "fraction": "7/10",
+          "value": 0.7
+        },
+        "p_n": {
+          "fraction": "13/20",
+          "value": 0.65
+        },
+        "delta": {
+          "fraction": "1/20",
+          "value": 0.05
+        }
+      },
+      "individual_survival": [
+        0.7004,
+        0.7027,
+        0.64335,
+        0.65225,
+        0.6455500000000001,
+        0.65575
+      ],
+      "control_individual_survival": [
+        0.66615,
+        0.6675,
+        0.66725,
+        0.66645,
+        0.66605,
+        0.6666000000000001
+      ],
+      "first_branches": [
+        {
+          "losing_c": 0,
+          "losing_n": 1,
+          "probability": "2/15",
+          "next_state": [
+            2,
+            3,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 0,
+          "losing_n": 2,
+          "probability": "1/5",
+          "next_state": [
+            0,
+            2,
+            2
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 0,
+          "losing_n": 3,
+          "probability": "2/15",
+          "next_state": [
+            0,
+            3,
+            2
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 0,
+          "losing_n": 4,
+          "probability": "1/30",
+          "next_state": [
+            0,
+            4,
+            2
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 2,
+          "losing_n": 0,
+          "probability": "1/30",
+          "next_state": [
+            2,
+            0,
+            2
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 2,
+          "losing_n": 1,
+          "probability": "2/15",
+          "next_state": [
+            2,
+            1,
+            2
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 2,
+          "losing_n": 2,
+          "probability": "1/5",
+          "next_state": [
+            2,
+            2,
+            2
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 2,
+          "losing_n": 3,
+          "probability": "2/15",
+          "next_state": [
+            2,
+            3,
+            2
+          ],
+          "confirmed_c": 0
+        }
+      ],
+      "sample_game": {
+        "catchers": [
+          4,
+          5
+        ],
+        "events": [
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              1,
+              2,
+              0
+            ],
+            "released": false,
+            "losers": [],
+            "action": "무승부: 동일 참가자로 재투구",
+            "next_pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "selected": []
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            "released": false,
+            "losers": [
+              5
+            ],
+            "action": "패자를 술래로 확정, 부족한 정원은 직전 승자에서 선정",
+            "next_pool": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            "selected": [
+              5
+            ]
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              2,
+              0
+            ],
+            "released": false,
+            "losers": [
+              0,
+              1,
+              2,
+              4
+            ],
+            "action": "패자 과다: 승자는 생존 확정, 패자끼리 재선정",
+            "next_pool": [
+              0,
+              1,
+              2,
+              4
+            ],
+            "selected": [
+              5
+            ]
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              4
+            ],
+            "hands": [
+              0,
+              0,
+              1,
+              2
+            ],
+            "released": false,
+            "losers": [],
+            "action": "무승부: 동일 참가자로 재투구",
+            "next_pool": [
+              0,
+              1,
+              2,
+              4
+            ],
+            "selected": [
+              5
+            ]
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              4
+            ],
+            "hands": [
+              0,
+              0,
+              2,
+              0
+            ],
+            "released": false,
+            "losers": [
+              0,
+              1,
+              4
+            ],
+            "action": "패자 과다: 승자는 생존 확정, 패자끼리 재선정",
+            "next_pool": [
+              0,
+              1,
+              4
+            ],
+            "selected": [
+              5
+            ]
+          },
+          {
+            "pool": [
+              0,
+              1,
+              4
+            ],
+            "hands": [
+              0,
+              0,
+              0
+            ],
+            "released": false,
+            "losers": [],
+            "action": "무승부: 동일 참가자로 재투구",
+            "next_pool": [
+              0,
+              1,
+              4
+            ],
+            "selected": [
+              5
+            ]
+          },
+          {
+            "pool": [
+              0,
+              1,
+              4
+            ],
+            "hands": [
+              0,
+              0,
+              1
+            ],
+            "released": false,
+            "losers": [
+              4
+            ],
+            "action": "패자를 술래로 확정, 부족한 정원은 직전 승자에서 선정",
+            "next_pool": [
+              0,
+              1
+            ],
+            "selected": [
+              5,
+              4
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "n6_c3_k1",
+      "players": 6,
+      "colluders": 3,
+      "catchers": 1,
+      "trials": 20000,
+      "seed": "20261110:6:3:1",
+      "stats": {
+        "p_c": 0.91745,
+        "p_n": 0.7492166666666666,
+        "delta": 0.16823333333333335,
+        "standard_error": 0.0020348562271882012,
+        "ci95": [
+          0.16424501512804446,
+          0.17222165153862223
+        ],
+        "p_value_normal": 0.0,
+        "baseline": 0.8333333333333334,
+        "p_value_holm": 0.0
+      },
+      "exact": {
+        "p_c": {
+          "fraction": "11/12",
+          "value": 0.9166666666666666
+        },
+        "p_n": {
+          "fraction": "3/4",
+          "value": 0.75
+        },
+        "delta": {
+          "fraction": "1/6",
+          "value": 0.16666666666666666
+        }
+      },
+      "individual_survival": [
+        0.9184,
+        0.9149,
+        0.91905,
+        0.751,
+        0.7456,
+        0.75105
+      ],
+      "control_individual_survival": [
+        0.8326,
+        0.83495,
+        0.83175,
+        0.83395,
+        0.8289,
+        0.83785
+      ],
+      "first_branches": [
+        {
+          "losing_c": 0,
+          "losing_n": 1,
+          "probability": "3/14",
+          "next_state": [
+            0,
+            1,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 0,
+          "losing_n": 2,
+          "probability": "3/14",
+          "next_state": [
+            0,
+            2,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 0,
+          "losing_n": 3,
+          "probability": "1/14",
+          "next_state": [
+            0,
+            3,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 3,
+          "losing_n": 0,
+          "probability": "1/14",
+          "next_state": [
+            3,
+            0,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 3,
+          "losing_n": 1,
+          "probability": "3/14",
+          "next_state": [
+            3,
+            1,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 3,
+          "losing_n": 2,
+          "probability": "3/14",
+          "next_state": [
+            3,
+            2,
+            1
+          ],
+          "confirmed_c": 0
+        }
+      ],
+      "sample_game": {
+        "catchers": [
+          4
+        ],
+        "events": [
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              2,
+              0,
+              2
+            ],
+            "released": false,
+            "losers": [
+              0,
+              1,
+              2,
+              4
+            ],
+            "action": "패자 과다: 승자는 생존 확정, 패자끼리 재선정",
+            "next_pool": [
+              0,
+              1,
+              2,
+              4
+            ],
+            "selected": []
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              4
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "released": false,
+            "losers": [
+              4
+            ],
+            "action": "패자를 술래로 확정, 부족한 정원은 직전 승자에서 선정",
+            "next_pool": [
+              0,
+              1,
+              2
+            ],
+            "selected": [
+              4
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "n6_c3_k2",
+      "players": 6,
+      "colluders": 3,
+      "catchers": 2,
+      "trials": 20000,
+      "seed": "20261110:6:3:2",
+      "stats": {
+        "p_c": 0.7496666666666667,
+        "p_n": 0.5836666666666667,
+        "delta": 0.16600000000000004,
+        "standard_error": 0.0039161588512649425,
+        "ci95": [
+          0.15832432865152074,
+          0.17367567134847933
+        ],
+        "p_value_normal": 0.0,
+        "baseline": 0.6666666666666666,
+        "p_value_holm": 0.0
+      },
+      "exact": {
+        "p_c": {
+          "fraction": "3/4",
+          "value": 0.75
+        },
+        "p_n": {
+          "fraction": "7/12",
+          "value": 0.5833333333333334
+        },
+        "delta": {
+          "fraction": "1/6",
+          "value": 0.16666666666666666
+        }
+      },
+      "individual_survival": [
+        0.74975,
+        0.7471,
+        0.75215,
+        0.58555,
+        0.58145,
+        0.5840000000000001
+      ],
+      "control_individual_survival": [
+        0.6686000000000001,
+        0.67485,
+        0.66315,
+        0.65835,
+        0.6656500000000001,
+        0.6694
+      ],
+      "first_branches": [
+        {
+          "losing_c": 0,
+          "losing_n": 1,
+          "probability": "3/14",
+          "next_state": [
+            3,
+            2,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 0,
+          "losing_n": 2,
+          "probability": "3/14",
+          "next_state": [
+            0,
+            2,
+            2
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 0,
+          "losing_n": 3,
+          "probability": "1/14",
+          "next_state": [
+            0,
+            3,
+            2
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 3,
+          "losing_n": 0,
+          "probability": "1/14",
+          "next_state": [
+            3,
+            0,
+            2
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 3,
+          "losing_n": 1,
+          "probability": "3/14",
+          "next_state": [
+            3,
+            1,
+            2
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 3,
+          "losing_n": 2,
+          "probability": "3/14",
+          "next_state": [
+            3,
+            2,
+            2
+          ],
+          "confirmed_c": 0
+        }
+      ],
+      "sample_game": {
+        "catchers": [
+          4,
+          5
+        ],
+        "events": [
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              2,
+              1,
+              1
+            ],
+            "released": false,
+            "losers": [],
+            "action": "무승부: 동일 참가자로 재투구",
+            "next_pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "selected": []
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              2,
+              0,
+              0
+            ],
+            "released": false,
+            "losers": [
+              0,
+              1,
+              2,
+              4,
+              5
+            ],
+            "action": "패자 과다: 승자는 생존 확정, 패자끼리 재선정",
+            "next_pool": [
+              0,
+              1,
+              2,
+              4,
+              5
+            ],
+            "selected": []
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              4,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "released": false,
+            "losers": [],
+            "action": "무승부: 동일 참가자로 재투구",
+            "next_pool": [
+              0,
+              1,
+              2,
+              4,
+              5
+            ],
+            "selected": []
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              4,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              2,
+              1
+            ],
+            "released": false,
+            "losers": [],
+            "action": "무승부: 동일 참가자로 재투구",
+            "next_pool": [
+              0,
+              1,
+              2,
+              4,
+              5
+            ],
+            "selected": []
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              4,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "released": false,
+            "losers": [
+              4,
+              5
+            ],
+            "action": "패자를 술래로 확정, 부족한 정원은 직전 승자에서 선정",
+            "next_pool": [
+              0,
+              1,
+              2
+            ],
+            "selected": [
+              4,
+              5
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "n6_c4_k1",
+      "players": 6,
+      "colluders": 4,
+      "catchers": 1,
+      "trials": 20000,
+      "seed": "20261110:6:4:1",
+      "stats": {
+        "p_c": 0.9162125,
+        "p_n": 0.667575,
+        "delta": 0.2486375,
+        "standard_error": 0.0025034479807411842,
+        "ci95": [
+          0.2437307419577473,
+          0.2535442580422527
+        ],
+        "p_value_normal": 0.0,
+        "baseline": 0.8333333333333334,
+        "p_value_holm": 0.0
+      },
+      "exact": {
+        "p_c": {
+          "fraction": "11/12",
+          "value": 0.9166666666666666
+        },
+        "p_n": {
+          "fraction": "2/3",
+          "value": 0.6666666666666666
+        },
+        "delta": {
+          "fraction": "1/4",
+          "value": 0.25
+        }
+      },
+      "individual_survival": [
+        0.9171,
+        0.916,
+        0.9162,
+        0.91555,
+        0.6650499999999999,
+        0.6700999999999999
+      ],
+      "control_individual_survival": [
+        0.8291999999999999,
+        0.83195,
+        0.8335,
+        0.8368,
+        0.8316,
+        0.83695
+      ],
+      "first_branches": [
+        {
+          "losing_c": 0,
+          "losing_n": 1,
+          "probability": "1/3",
+          "next_state": [
+            0,
+            1,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 0,
+          "losing_n": 2,
+          "probability": "1/6",
+          "next_state": [
+            0,
+            2,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 4,
+          "losing_n": 0,
+          "probability": "1/6",
+          "next_state": [
+            4,
+            0,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 4,
+          "losing_n": 1,
+          "probability": "1/3",
+          "next_state": [
+            4,
+            1,
+            1
+          ],
+          "confirmed_c": 0
+        }
+      ],
+      "sample_game": {
+        "catchers": [
+          2
+        ],
+        "events": [
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              0,
+              2,
+              1
+            ],
+            "released": false,
+            "losers": [],
+            "action": "무승부: 동일 참가자로 재투구",
+            "next_pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "selected": []
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              0,
+              2,
+              0
+            ],
+            "released": false,
+            "losers": [
+              0,
+              1,
+              2,
+              3,
+              5
+            ],
+            "action": "패자 과다: 승자는 생존 확정, 패자끼리 재선정",
+            "next_pool": [
+              0,
+              1,
+              2,
+              3,
+              5
+            ],
+            "selected": []
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "released": false,
+            "losers": [],
+            "action": "무승부: 동일 참가자로 재투구",
+            "next_pool": [
+              0,
+              1,
+              2,
+              3,
+              5
+            ],
+            "selected": []
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "released": false,
+            "losers": [],
+            "action": "무승부: 동일 참가자로 재투구",
+            "next_pool": [
+              0,
+              1,
+              2,
+              3,
+              5
+            ],
+            "selected": []
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              0,
+              2
+            ],
+            "released": false,
+            "losers": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "action": "패자 과다: 승자는 생존 확정, 패자끼리 재선정",
+            "next_pool": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "selected": []
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "hands": [
+              2,
+              2,
+              0,
+              2
+            ],
+            "released": true,
+            "losers": [
+              2
+            ],
+            "action": "패자를 술래로 확정, 부족한 정원은 직전 승자에서 선정",
+            "next_pool": [
+              0,
+              1,
+              3
+            ],
+            "selected": [
+              2
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "n6_c4_k2",
+      "players": 6,
+      "colluders": 4,
+      "catchers": 2,
+      "trials": 20000,
+      "seed": "20261110:6:4:2",
+      "stats": {
+        "p_c": 0.750675,
+        "p_n": 0.49865,
+        "delta": 0.252025,
+        "standard_error": 0.004332917167141424,
+        "ci95": [
+          0.2435324823524028,
+          0.2605175176475972
+        ],
+        "p_value_normal": 0.0,
+        "baseline": 0.6666666666666666,
+        "p_value_holm": 0.0
+      },
+      "exact": {
+        "p_c": {
+          "fraction": "3/4",
+          "value": 0.75
+        },
+        "p_n": {
+          "fraction": "1/2",
+          "value": 0.5
+        },
+        "delta": {
+          "fraction": "1/4",
+          "value": 0.25
+        }
+      },
+      "individual_survival": [
+        0.7521,
+        0.7462,
+        0.75175,
+        0.75265,
+        0.49570000000000003,
+        0.5016
+      ],
+      "control_individual_survival": [
+        0.6679999999999999,
+        0.6615,
+        0.6677500000000001,
+        0.6669499999999999,
+        0.6678999999999999,
+        0.6678999999999999
+      ],
+      "first_branches": [
+        {
+          "losing_c": 0,
+          "losing_n": 1,
+          "probability": "1/3",
+          "next_state": [
+            4,
+            1,
+            1
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 0,
+          "losing_n": 2,
+          "probability": "1/6",
+          "next_state": [
+            0,
+            2,
+            2
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 4,
+          "losing_n": 0,
+          "probability": "1/6",
+          "next_state": [
+            4,
+            0,
+            2
+          ],
+          "confirmed_c": 0
+        },
+        {
+          "losing_c": 4,
+          "losing_n": 1,
+          "probability": "1/3",
+          "next_state": [
+            4,
+            1,
+            2
+          ],
+          "confirmed_c": 0
+        }
+      ],
+      "sample_game": {
+        "catchers": [
+          4,
+          5
+        ],
+        "events": [
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "released": false,
+            "losers": [],
+            "action": "무승부: 동일 참가자로 재투구",
+            "next_pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "selected": []
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              0,
+              2,
+              1
+            ],
+            "released": false,
+            "losers": [],
+            "action": "무승부: 동일 참가자로 재투구",
+            "next_pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "selected": []
+          },
+          {
+            "pool": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "hands": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1
+            ],
+            "released": false,
+            "losers": [
+              4,
+              5
+            ],
+            "action": "패자를 술래로 확정, 부족한 정원은 직전 승자에서 선정",
+            "next_pool": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "selected": [
+              4,
+              5
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "main": {
+    "conditions": 10,
+    "games_per_arm": 100000,
+    "maximum_exact_deviation_in_standard_errors": 2.2352534430816897,
+    "checks": "CSV consistency; regenerated statistics; 100-game seed replay per condition; source hashes; individual rates within 6 SE of theory"
+  },
+  "seed-check": {
+    "conditions": 10,
+    "games_per_arm": 20000,
+    "maximum_exact_deviation_in_standard_errors": 1.751514147842825,
+    "checks": "CSV consistency; regenerated statistics; 100-game seed replay per condition; source hashes; individual rates within 6 SE of theory"
+  },
+  "draft_characters_including_whitespace": 640
+}
