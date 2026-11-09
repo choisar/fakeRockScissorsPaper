@@ -4,7 +4,19 @@
 
 [빠더너스 영상](https://youtu.be/YJckrnOUaoM)에서 비용 부담자를 정할 때 일부가 같은 손을 내기로 약속하는 모습을 보고 시작한 개인 프로젝트다. 처음에는 개인 생존 확률에 큰 차이가 없으리라 예상했다. 초기 실험에서 예상과 다른 차이를 관측한 뒤, 조건을 명시한 시뮬레이션과 정확 확률 계산으로 질문을 확인했다. 영상은 질문의 계기이며 실제 영상 규칙을 재현한 모델은 아니다.
 
-## 핵심 결과
+## 실제 투구에서 원인 추적하기
+
+[이슈 #1](https://github.com/choisar/fakeRockScissorsPaper/issues/1)의 구현은 **실제 투구 저장 → 원자료 재집계 → 관측 분기와 최종 결과 연결** 순서로 진행한다.
+
+- **[최신 투구 분석 리포트](outputs/throw-analysis/main/report.html)**: 세 선택 방식, 술래 정원별 관측 차이와 신뢰구간, 분기별 기여도, 실제 게임 재생
+- [주 실행 요약](outputs/throw-analysis/main/results.json) · [다른 시드 요약](outputs/throw-analysis/seed-check/results.json)
+- [검증 기록](VALIDATION.md) · [규칙·기록·집계 명세](project.md)
+
+6명 중 같은 3명을 비교집단으로 두고 술래를 1~5명 선정한다. 같은 손 고정, 매 투구 공동 무작위 선택, 독립 무작위 선택을 비교한다. 공동/독립 무작위는 개인별 손 선택 확률이 같고 선택의 결합만 다르다. 공동 집단만 남으면 기존처럼 독립 선택한다.
+
+각 게임의 첫 유효 투구를 과다·일치·미달로 나누고 발생 비율, 즉시 확정 인원, 해당 경로의 최종 차이와 전체 차이에 대한 가중 기여도를 집계한다. 이 분해는 관측 경로의 구성이며 분기 자체의 인과 효과가 아니다. 후속 투구는 현재 참가자 구성과 정원별로 집계한다. 리포트의 점과 오차막대는 실제 게임에서 구하며 정확 계산은 별도 검산 기준이다. 관측하지 않은 전체 순위는 그래프로 제시하지 않는다.
+
+## 정확 계산으로 확인한 대표 결과
 
 생존은 최종 술래로 선정되지 않는 것이다. 비교 대상은 **같은 게임 안의 담합자 한 명과 비담합자 한 명의 생존 확률**이다.
 
@@ -17,8 +29,8 @@
 
 정의한 모델의 정확 계산값이다. **담합이 유리한 조건과 차이가 없는 조건이 모두 존재한다.** 실제 사람의 학습·심리전이나 다른 술래 선정 규칙까지 일반화하지 않는다.
 
-- [최신 인터랙티브 리포트](outputs/validated-main/report.html): 조건별 결과, 신뢰구간, 정확 확률, 종료 분기와 게임 예시
-- [주 실험 데이터](outputs/validated-main/results.json) · [다른 시드 데이터](outputs/validated-seed-check/results.json)
+- [이전 통계 검증 리포트](outputs/validated-main/report.html): 조건별 결과, 신뢰구간, 정확 확률, 종료 분기와 게임 예시
+- [이전 주 실험 데이터](outputs/validated-main/results.json) · [다른 시드 데이터](outputs/validated-seed-check/results.json)
 - [실험 명세와 계산 방법](project.md): 규칙·가정·통계·정확 계산
 - [검증 기록](VALIDATION.md): 실행 결과, 검사 근거와 한계
 
@@ -36,19 +48,19 @@ Python 3.10 이상. 실험·수치 검증에는 외부 패키지가 필요 없�
 
 ```sh
 python -m unittest test_research -v
-python simulate.py --seed 20261109 --trials 100000 --output outputs/my-main
-python simulate.py --seed 20261110 --trials 20000 --output outputs/my-seed-check
+python simulate.py --throw-analysis --players 6 --colluders 3 --catchers 1 2 3 4 5 --seed 20261109 --trials 100000 --output outputs/my-main
+python simulate.py --throw-analysis --players 6 --colluders 3 --catchers 1 2 3 4 5 --seed 20261110 --trials 20000 --output outputs/my-seed-check
 python verify_outputs.py outputs/my-main outputs/my-seed-check --output outputs/my-verification.json
 ```
 
-기본 10개 조건은 참가자 4·6명, 담합자 2·3·4명, 술래 1·2명 중 유효한 조합이다. 한 조건만 선택하려면 `--players 6 --colluders 3 --catchers 2`를 추가한다. 옵션: `python simulate.py --help`, `python verify_outputs.py --help`.
+위 명령은 5개 정원 × 3가지 선택 방식으로 15개 조합을 실행한다. 빠르게 확인하려면 `--trials 1000`을 사용한다. `--throw-analysis`를 생략하면 이전의 실험군·대조군 실행 방식이며 기본 10개 조건은 참가자 4·6명, 담합자 2·3·4명, 술래 1·2명 중 유효한 조합이다. 한 조건만 선택하려면 `--players 6 --colluders 3 --catchers 2`를 추가한다. 옵션: `python simulate.py --help`, `python verify_outputs.py --help`.
 
 실험은 비어 있지 않은 출력 폴더를 거부한다. 검증 결과 파일도 기존 파일을 덮어쓰지 않는다. 같은 옵션·시드·Python 버전·소스에서는 CSV와 수치 결과가 재현되며 실행 시각 등 메타데이터는 달라진다. 요약 JSON·HTML·검증 기록은 Git으로 관리하고, 대용량 CSV·투구 로그·스크린샷은 로컬 생성물로 제외한다. 저장소를 새로 받으면 위 명령으로 원자료를 생성한 뒤 검증한다. 새 구현은 표본분산 0의 추론 불가 상태와 정원 충족 종료를 명시한다.
 
 선택적인 화면 검사는 Playwright와 Chromium 계열 브라우저가 필요하다. 자동 탐색하거나 `--browser`로 실행 파일, `--channel`로 설치 채널을 지정한다.
 
 ```sh
-node visual_check.cjs outputs/validated-main
+node visual_check.cjs outputs/throw-analysis/main
 # 예: node visual_check.cjs outputs/my-main --browser /usr/bin/chromium
 ```
 
@@ -58,9 +70,9 @@ node visual_check.cjs outputs/validated-main
 
 | 파일 | 역할 |
 |---|---|
-| engine.py | 최종 술래 명단과 선택적 투구·종료 기록 |
+| engine.py | 선택 전략, 최종 술래 명단과 투구 이벤트 콜백 |
 | simulate.py | 조건·시드별 실행, CSV·메타데이터·소스 해시 생성 |
-| analysis.py | 게임 단위 통계와 Holm 보정 |
+| analysis.py | 게임 단위 통계, Holm 보정, 저장 투구에서 분기·상태·게임 예시 재집계 |
 | exact.py | 다항분포·상태 재귀·유리수에 의한 정확 계산 |
 | report.py | 오프라인 HTML 리포트 생성 |
 | test_research.py / verify_outputs.py | 독립 완전 열거·경계 조건·결과 훼손 검사 / 저장 결과 검산 |
@@ -69,6 +81,6 @@ node visual_check.cjs outputs/validated-main
 
 - [초기 구현과 결과](archive/initial/): NumPy를 사용하던 초기 실험이다. 현재 실행 경로에서는 호출하지 않는다.
 - [과거 개선 계획](archive/plans/IMPROVEMENT_PLAN.md): 당시의 계획·수행 기록이며 현재 상태를 설명하는 문서가 아니다.
-- `outputs/main`, `outputs/seed-check`와 루트의 기존 검증 산출물은 이전 구현의 기록으로 보존했다. 현재 검증기는 최신 소스 해시와 새 결과 형식을 검사하므로 과거 결과는 당시 소스·도구로 검증해야 한다.
+- `outputs/main`, `outputs/seed-check`와 루트의 기존 검증 산출물은 이전 구현의 기록으로 보존했다. 이전의 `outputs/validated-main`, `outputs/validated-seed-check`도 통계 수정 시점의 기록이다. 현재 검증기는 최신 소스 해시를 검사하므로 과거 결과는 당시 소스·도구로 검증해야 한다.
 
 작성자가 혼자 시작한 프로젝트이며 질문·초기 예상은 작성자 설명에 따른다. 후속 고도화의 구현·문서·테스트·재실행에는 Codex의 도움을 받았다. 직접 설명·검토한 판단과 도구 지원 범위를 구분한다. 자기소개서 등 제출용 개인 문서는 저장소 밖에서 관리한다.

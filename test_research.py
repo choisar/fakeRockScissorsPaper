@@ -14,7 +14,7 @@ from analysis import summarize, holm_adjust
 from engine import GameConfig, play_game
 from exact import expected_colluder_catchers, exact_summary, first_branches
 from simulate import run
-from verify_outputs import verify
+from verify_outputs import verify, validate_game
 
 
 @lru_cache(None)
@@ -214,6 +214,82 @@ class SavedOutputTests(unittest.TestCase):
         result = verify(folder)
         self.assertEqual(result['zero_variance_conditions'], ['n2_c1_k1'])
         self.assertIsNone(result['maximum_exact_deviation_in_standard_errors'])
+
+
+class ThrowAnalysisTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        cls.folder = Path(cls.temporary.name)/'observed'
+        with contextlib.redirect_stdout(io.StringIO()):
+            cls.data = run(Namespace(players=[6], colluders=[3], catchers=[1, 2, 3, 4, 5],
+                                    trials=200, seed=23, output=cls.folder, throw_analysis=True))
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.temporary.cleanup()
+
+    def test_observation_does_not_change_results_or_rng(self):
+        for strategy in ('fixed', 'shared_random', 'independent'):
+            for k in range(1, 6):
+                with self.subTest(strategy=strategy, quota=k):
+                    cfg = GameConfig(6, 3, k, strategy)
+                    observed, plain = Random(451), Random(451)
+                    for _ in range(30):
+                        events = []
+                        recorded = play_game(cfg, observed, on_event=events.append)
+                        original = play_game(cfg, plain)
+                        self.assertEqual(recorded['catchers'], original['catchers'])
+                        self.assertEqual(observed.getstate(), plain.getstate())
+                        validate_game([{key: value for key, value in e.items() if key != 'action'} for e in events],
+                                      recorded['catchers'], 6, 3, k, strategy)
+
+    def test_all_strategies_and_quotas_verify_from_raw_throws(self):
+        self.assertEqual(verify(self.folder)['total_games'], 3000)
+        for c in self.data['conditions']:
+            self.assertEqual(sum(b['count'] for b in c['observed_branches']), 200)
+            self.assertAlmostEqual(sum(b['contribution'] for b in c['observed_branches']), c['stats']['delta'])
+            self.assertEqual(sum(s['visits'] for s in c['observed_states']), c['throws'])
+            self.assertEqual(sum(map(sum, c['hand_counts'])),
+                             sum((s['pool_c']+s['pool_n'])*s['visits'] for s in c['observed_states']))
+            if c['strategy'] != 'independent':
+                self.assertEqual(c['same_hand_pairs'], c['eligible_pairs'])
+
+    def test_observed_summary_corruption_is_rejected(self):
+        file = self.folder/'results.json'
+        original = file.read_text()
+        try:
+            data = json.loads(original)
+            data['conditions'][0]['observed_branches'][0]['frequency'] = 123
+            file.write_text(json.dumps(data))
+            with self.assertRaisesRegex(ValueError, 'observed aggregate'):
+                verify(self.folder)
+        finally:
+            file.write_text(original)
+
+    def test_throw_corruption_is_rejected_even_with_updated_hash(self):
+        import gzip
+        import hashlib
+        file = self.folder/'results.json'
+        original = file.read_text()
+        data = json.loads(original)
+        c = data['conditions'][0]
+        raw = self.folder/c['raw_file']
+        original_raw = raw.read_bytes()
+        try:
+            with gzip.open(raw, 'rt') as source:
+                records = [json.loads(line) for line in source]
+            records[0]['event']['hands'][0] = 1
+            with gzip.open(raw, 'wt') as target:
+                for record in records:
+                    target.write(json.dumps(record)+'\n')
+            c['raw_sha256'] = hashlib.sha256(raw.read_bytes()).hexdigest()
+            file.write_text(json.dumps(data))
+            with self.assertRaisesRegex(ValueError, 'hand violation'):
+                verify(self.folder)
+        finally:
+            raw.write_bytes(original_raw)
+            file.write_text(original)
 
 
 if __name__ == '__main__':

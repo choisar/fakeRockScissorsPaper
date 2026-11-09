@@ -43,6 +43,8 @@ def verify(folder):
     for name, digest in hashes.items():
         require(hashlib.sha256((ROOT / name).read_bytes()).hexdigest() == digest,
                 f'source hash: {name}')
+    if data.get('mode') == 'throw-analysis':
+        return verify_throw_analysis(folder, data)
     options = data['metadata']['options']
     expected_ids = {f'n{n}_c{m}_k{k}' for n, m, k in
                     product(options['players'], options['colluders'], options['catchers'])
@@ -113,6 +115,109 @@ def verify(folder):
                 zero_variance_conditions=zero_variance,
                 checks='CSV invariants; all statistics including CI and Holm; exact fractions and branches; '
                        'trace and 100-game seed replay; source hashes; individual rates within 6 SE of theory')
+
+
+def validate_game(events, caught, players, group, catchers, strategy):
+    """Independent matchup table and state reconstruction, not engine calls."""
+    pool, selected = list(range(players)), []
+    for event in events:
+        require(pool is not None, 'event after termination')
+        needed = catchers-len(selected)
+        automatic = needed == len(pool)
+        release = not automatic and strategy != 'independent' and all(p < group for p in pool)
+        hands = event['hands']
+        require(isinstance(hands, list) and len(hands) == (0 if automatic else len(pool)), 'hand count')
+        require(all(type(h) is int and h in (0, 1, 2) for h in hands), 'invalid hand')
+        focal = [h for p, h in zip(pool, hands) if p < group]
+        if not release and strategy != 'independent' and not automatic:
+            require(len(set(focal)) <= 1, 'shared hand violation')
+            if strategy == 'fixed':
+                require(all(h == 0 for h in focal), 'fixed hand violation')
+        losing = {(0, 1): 1, (0, 2): 0, (1, 2): 2}.get(tuple(sorted(set(hands))))
+        losers = pool.copy() if automatic else [p for p, h in zip(pool, hands) if h == losing]
+        winners = [p for p in pool if p not in losers]
+        if automatic:
+            branch, new_caught, safe, following = 'automatic', pool.copy(), [], None
+        elif not losers:
+            branch, new_caught, safe, following = 'draw', [], [], pool
+        elif len(losers) > needed:
+            branch, new_caught, safe, following = 'excess', [], winners, losers
+        elif len(losers) == needed:
+            branch, new_caught, safe, following = 'equal', losers, winners, None
+        else:
+            branch, new_caught, safe, following = 'shortfall', losers, [], winners
+        selected.extend(new_caught)
+        expected = dict(pool=pool, hands=hands, released=release, losers=losers,
+                        next_pool=following, selected=selected.copy(), terminal=following is None,
+                        kind='automatic' if automatic else 'throw', branch=branch, remaining=needed,
+                        new_catchers=new_caught, new_survivors=safe)
+        require(event == expected, 'event transition mismatch')
+        pool = following
+    require(pool is None and sorted(selected) == caught, 'final result mismatch')
+
+
+def verify_throw_analysis(folder, data):
+    from analysis import analyze_log
+    from fractions import Fraction
+    options = data['metadata']['options']
+    expected_ids = {f'n{n}_c{c}_k{k}_{strategy}' for n, c, k in
+                    product(options['players'], options['colluders'], options['catchers'])
+                    if 0 < c < n and 0 < k < n
+                    for strategy in ('fixed', 'shared_random', 'independent')}
+    conditions = data['conditions']
+    require(len(conditions) == len(expected_ids) and {c['id'] for c in conditions} == expected_ids,
+            'strategy/condition coverage')
+    raw_p, maximum_z = [], None
+    for c in conditions:
+        n, m, k, strategy = c['players'], c['colluders'], c['catchers'], c['strategy']
+        cfg = GameConfig(n, m, k, strategy)
+        require(c['id'] == f'n{n}_c{m}_k{k}_{strategy}', 'condition ID')
+        require(c['seed'] == f"{data['metadata']['seed']}:{n}:{m}:{k}:{strategy}", 'condition seed')
+        require(c['raw_file'] == c['id']+'.jsonl.gz', 'raw path')
+        raw = folder/c['raw_file']
+        digest = hashlib.sha256()
+        with raw.open('rb') as file:
+            for chunk in iter(lambda: file.read(1024*1024), b''):
+                digest.update(chunk)
+        require(digest.hexdigest() == c['raw_sha256'], 'raw source hash')
+        rng = Random(c['seed'])
+        def audit(game, events, caught):
+            validate_game(events, caught, n, m, k, strategy)
+            if game < 100:
+                replay = play_game(cfg, rng, trace=True)
+                compact = [{key: value for key, value in e.items() if key != 'action'} for e in replay['events']]
+                require(compact == events and replay['catchers'] == caught, 'seed replay')
+        observed = analyze_log(raw, n, m, k, on_game=audit)
+        require(observed['trials'] == c['trials'] == data['metadata']['trials'], 'trial count')
+        for key, expected in observed.items():
+            if key == 'stats':
+                for stat, value in expected.items():
+                    same(c['stats'][stat], value, stat, probability=stat == 'p_value_normal')
+            else:
+                require(c[key] == expected, 'observed aggregate: '+key)
+        same(sum(b['contribution'] for b in observed['observed_branches']),
+             observed['stats']['delta'], 'branch contribution sum')
+        require(sum(b['count'] for b in observed['observed_branches']) == c['trials'], 'branch partition')
+        if strategy == 'independent':
+            baseline = Fraction(n-k, n)
+            exact = {key: dict(fraction=str(value), value=float(value)) for key, value in
+                     [('p_c', baseline), ('p_n', baseline), ('delta', Fraction(0))]}
+        else:
+            exact = exact_summary(m, n-m, k)
+        require(c['exact'] == exact, 'exact check')
+        se = observed['stats']['standard_error']
+        if se:
+            z = abs(observed['stats']['delta']-exact['delta']['value'])/se
+            require(z < 6, 'exact deviation exceeds 6 SE')
+            maximum_z = max(maximum_z or 0, z)
+        raw_p.append(observed['stats']['p_value_normal'])
+    for c, p in zip(conditions, holm_adjust(raw_p)):
+        same(c['stats']['p_value_holm'], p, 'Holm adjustment', probability=True)
+    return dict(conditions=len(conditions), games_per_condition=data['metadata']['trials'],
+                total_games=len(conditions)*data['metadata']['trials'],
+                maximum_exact_deviation_in_standard_errors=maximum_z,
+                checks='all raw throws and transitions; final outcomes; independent replay; raw/source hashes; '
+                       'reconstructed statistics, branches, states and examples; contribution sum; exact probabilities')
 
 
 def main():
