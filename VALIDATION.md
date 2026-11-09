@@ -2,6 +2,14 @@
 
 최신 결과는 `outputs/throw-analysis/main`과 `outputs/throw-analysis/seed-check`다. 재현 명령은 [README](README.md#재현하기), 기록·집계 형식은 [실험 명세](project.md#전체-투구-기록-모드), 구현 범위는 [이슈 #1](https://github.com/choisar/fakeRockScissorsPaper/issues/1)에서 확인한다.
 
+## 설명 보강 검증
+
+추가 실험 없이 동일한 주/확인 실행 요약에서 `report-explained.html`을 생성했다. README의 핵심 결론에 불리한 조건을 포함하고, 실험 명세와 리포트에 정원 일치 경로가 비교집단을 생존/술래로 확정하는 이유, 과다·미달 경로의 합산, 실제 게임 ID를 연결했다.
+
+원래 `results.json`과 실험 메타데이터가 바뀌지 않았음을 Git의 이전 버전과 바이트 단위로 대조했다. 새 HTML은 입력 JSON과 렌더러의 SHA-256을 별도 `presentation` 메타데이터에 기록한다. 실험 당시 소스 해시는 원래 실행을 가리키므로 수정하지 않는다. 기존 원자료 감사 기록은 당시 실행 소스 `2035361`에 해당하며, 이번에는 실험을 재실행하거나 전체 로그 감사를 반복하지 않았다.
+
+현재 소스로 테스트 18개가 통과했다. 설명 리포트의 15개 조합을 PC·모바일에서 검사해 정원·전략별 설명 갱신, 기여도 합 표시와 실제 게임 재생을 확인했다. JavaScript 오류와 페이지 가로 넘침이 없다. 근거: [설명 리포트 화면 검사](outputs/throw-analysis/main/explained-browser-check/verification.json).
+
 ## 테스트와 파일럿
 
 Linux·Python 3.12.14에서 `python -m unittest test_research -q`: **18개 테스트 통과**.

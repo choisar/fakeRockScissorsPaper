@@ -8,12 +8,14 @@ const assert = require('node:assert/strict');
 async function main() {
   const args = process.argv.slice(2);
   const folder = path.resolve(args.shift() || 'outputs/validated-main');
+  let reportFile = 'report.html';
   let executablePath, channel, artifactFolder = path.join(folder, 'browser-check');
   while (args.length) {
     const option = args.shift(), value = args.shift();
     if (!value) throw Error(`Missing value for ${option}`);
     if (option === '--browser') executablePath = path.resolve(value);
     else if (option === '--channel') channel = value;
+    else if (option === '--report') reportFile = value;
     else if (option === '--artifacts') artifactFolder = path.resolve(value);
     else throw Error(`Unknown option: ${option}`);
   }
@@ -27,7 +29,7 @@ async function main() {
   const data = JSON.parse(fs.readFileSync(path.join(folder, 'results.json'), 'utf8'));
   const browser = await chromium.launch({ headless: true, ...(executablePath ? { executablePath } : { channel }) });
   // Loopback serving also works where managed browsers disallow file:// URLs.
-  const html = fs.readFileSync(path.join(folder, 'report.html'));
+  const html = fs.readFileSync(path.join(folder, reportFile));
   const server = http.createServer((request, response) => {
     if (request.url !== '/report.html') { response.writeHead(404).end(); return; }
     response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
@@ -50,6 +52,12 @@ async function main() {
         await page.selectOption('#strategy', c.strategy);
         await page.locator('#quota').fill(String(c.catchers));
         assert.ok(await page.locator('#branches tr').count());
+        if (await page.locator('#mechanism').count()) {
+          assert.ok((await page.locator('#mechanism').textContent()).length > 20);
+          assert.match(await page.locator('#mechanism-numbers').textContent(), /합계/);
+          if (c.players === 6 && c.colluders === 3 && c.strategy !== 'independent' && c.catchers === 4)
+            assert.match(await page.locator('#mechanism').textContent(), /즉시 술래/);
+        }
         assert.equal(await page.locator('#effects circle').count(), data.conditions.filter(r => r.players === c.players && r.colluders === c.colluders).length);
         assert.match(await page.locator('#contribution-sum').textContent(), /전체 관측 차이/);
         await page.locator('#branches button').first().click();
@@ -113,7 +121,7 @@ async function main() {
     }
     await page.screenshot({ path: path.join(artifactFolder, 'mobile.png'), fullPage: true });
     assert.deepEqual(errors, []);
-    const evidence = { report: path.relative(__dirname, path.join(folder, 'report.html')), browser: browser.version(),
+    const evidence = { report: path.relative(__dirname, path.join(folder, reportFile)), browser: browser.version(),
       conditions: data.conditions.length, desktop: [1440, 1000], mobile: [390, 844], pageErrors: errors,
       horizontalOverflow: false, syntheticDisplayChecks: ['null inference', 'underflow p-value'], terminalBranches: true, mode: data.mode || 'legacy', observedReplayAndBranches: observed };
     fs.writeFileSync(path.join(artifactFolder, 'verification.json'), JSON.stringify(evidence, null, 2) + '\n', { flag: 'wx' });
